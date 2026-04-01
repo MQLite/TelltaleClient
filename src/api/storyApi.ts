@@ -1,6 +1,6 @@
 import type { Story, StoryMeta, StoryPage } from '../types/story'
 
-const BASE_URL = 'http://localhost:5000'
+const BASE_URL = ''
 
 export async function generateStory(keywords: string, language: string): Promise<Story> {
   const response = await fetch(`${BASE_URL}/api/story/generate`, {
