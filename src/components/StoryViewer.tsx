@@ -30,10 +30,6 @@ export default function StoryViewer({ story, imageBlobUrls, language, onBack }: 
     stop()
   }, [page])
 
-  useEffect(() => {
-    if (textVisible) speak(content, language)
-  }, [textVisible])
-
   const goTo = (n: number) => { stop(); setPage(n) }
 
   return (
