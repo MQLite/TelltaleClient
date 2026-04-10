@@ -12,7 +12,7 @@ function webSpeechFallback(text: string, language: Language) {
 
 export function useTextToSpeech() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  // cache: text → blob URL, persists for the component's lifetime
+  // cache key: "{voice}:{text}" → blob URL
   const cacheRef = useRef<Map<string, string>>(new Map())
 
   const stop = useCallback(() => {
@@ -24,20 +24,22 @@ export function useTextToSpeech() {
     window.speechSynthesis?.cancel()
   }, [])
 
-  const speak = useCallback(async (text: string, language: Language) => {
+  const speak = useCallback(async (text: string, language: Language, voice: string) => {
     stop()
 
-    let url = cacheRef.current.get(text)
+    const cacheKey = `${voice}:${text}`
+    let url = cacheRef.current.get(cacheKey)
 
     if (!url) {
       try {
-        const res = await fetch(`/api/tts?text=${encodeURIComponent(text)}&lang=${language}`)
+        const res = await fetch(
+          `/api/tts?text=${encodeURIComponent(text)}&lang=${language}&voice=${voice}`
+        )
         if (!res.ok) throw new Error(`TTS ${res.status}`)
         const blob = await res.blob()
         url = URL.createObjectURL(blob)
-        cacheRef.current.set(text, url)
+        cacheRef.current.set(cacheKey, url)
       } catch {
-        // API key not set or network error — fall back to browser TTS
         webSpeechFallback(text, language)
         return
       }
@@ -51,7 +53,7 @@ export function useTextToSpeech() {
   useEffect(() => {
     return () => {
       stop()
-      cacheRef.current.forEach(url => URL.revokeObjectURL(url))
+      cacheRef.current.forEach(u => URL.revokeObjectURL(u))
     }
   }, [stop])
 

@@ -375,6 +375,37 @@
 .btn-speak:hover:not(:disabled) { color: var(--gold); border-color: var(--gold); }
 .btn-speak:disabled { opacity: 0.3; cursor: not-allowed; }
 
+/* ─── Voice selector ─────────────────────────────────────────── */
+.voice-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.5rem 0;
+}
+.voice-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  margin-right: 0.2rem;
+}
+.btn-voice {
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.btn-voice:hover { border-color: var(--gold); color: var(--gold); }
+.btn-voice.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(240,192,96,0.12);
+}
+
 /* ─── Error toast ────────────────────────────────────────────── */
 .error-toast {
   position: fixed;
