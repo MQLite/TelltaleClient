@@ -1,4 +1,4 @@
-import type { Story, StoryMeta, StoryPage } from '../types/story'
+import type { Story, StoryMeta, StoryPage, Language } from '../types/story'
 
 const BASE_URL = ''
 
@@ -22,6 +22,27 @@ function buildImageUrl(prompt: string, seed: number): string {
 export async function listStories(): Promise<StoryMeta[]> {
   const res = await fetch(`${BASE_URL}/api/story/list`)
   return res.ok ? res.json() : []
+}
+
+/** Fetch all TTS in one batch request, return blob URLs. */
+export async function prefetchTts(
+  pages: StoryPage[],
+  language: Language,
+  voice: string,
+): Promise<string[]> {
+  const texts = pages.map(p => language === 'zh' ? p.contentZh : p.contentEn)
+  const res = await fetch('/api/tts/batch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ texts, language, voice }),
+  })
+  if (!res.ok) throw new Error(`TTS batch failed: ${res.status}`)
+  const data = await res.json() as { audios: string[] }
+  return data.audios.map(b64 => {
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0))
+    const blob = new Blob([bytes], { type: 'audio/mpeg' })
+    return URL.createObjectURL(blob)
+  })
 }
 
 /** Fetch all page images in parallel, return blob URLs for instant canvas rendering. */

@@ -6,34 +6,26 @@ import PaintCanvas from './PaintCanvas'
 interface Props {
   story: Story
   imageBlobUrls: string[]
+  ttsBlobUrls: string[]
   language: Language
   onBack: () => void
 }
 
-const VOICES = [
-  { id: 'fable',   en: 'Fable',   zh: '故事感' },
-  { id: 'nova',    en: 'Nova',    zh: '明亮' },
-  { id: 'shimmer', en: 'Shimmer', zh: '柔和' },
-  { id: 'alloy',   en: 'Alloy',   zh: '中性' },
-  { id: 'echo',    en: 'Echo',    zh: '低沉' },
-  { id: 'onyx',    en: 'Onyx',    zh: '温暖' },
-]
-
 const i18n = {
-  en: { back: '← Back', read: '🔊 Read Aloud', next: 'Next →', finish: 'The End ✦', prev: '← Prev', voice: 'Voice' },
-  zh: { back: '← 返回', read: '🔊 朗读', next: '下一页 →', finish: '故事结束 ✦', prev: '← 上一页', voice: '声音' },
+  en: { back: '← Back', read: '🔊 Read Aloud', next: 'Next →', finish: 'The End ✦', prev: '← Prev' },
+  zh: { back: '← 返回', read: '🔊 朗读', next: '下一页 →', finish: '故事结束 ✦', prev: '← 上一页' },
 }
 
-export default function StoryViewer({ story, imageBlobUrls, language, onBack }: Props) {
+export default function StoryViewer({ story, imageBlobUrls, ttsBlobUrls, language, onBack }: Props) {
   const [page, setPage] = useState(0)
   const [textVisible, setTextVisible] = useState(false)
-  const [voice, setVoice] = useState(() => language === 'zh' ? 'nova' : 'fable')
-  const { speak, stop } = useTextToSpeech()
+  const { play, stop } = useTextToSpeech()
   const t = i18n[language]
 
   const current = story.pages[page]
   const content = language === 'zh' ? current.contentZh : current.contentEn
   const title = language === 'zh' ? story.titleZh : story.titleEn
+  const ttsUrl = ttsBlobUrls[page]
 
   useEffect(() => {
     setTextVisible(false)
@@ -62,24 +54,15 @@ export default function StoryViewer({ story, imageBlobUrls, language, onBack }: 
         <p className="story-text">{content}</p>
       </div>
 
-      <div className="voice-selector">
-        <span className="voice-label">{t.voice}:</span>
-        {VOICES.map(v => (
-          <button
-            key={v.id}
-            className={`btn-voice ${voice === v.id ? 'active' : ''}`}
-            onClick={() => { stop(); setVoice(v.id) }}
-          >
-            {language === 'zh' ? v.zh : v.en}
-          </button>
-        ))}
-      </div>
-
       <nav className="story-nav">
         <button className="btn-nav" onClick={() => goTo(page - 1)} disabled={page === 0}>
           {t.prev}
         </button>
-        <button className="btn-speak" onClick={() => speak(content, language, voice)} disabled={!textVisible}>
+        <button
+          className="btn-speak"
+          onClick={() => ttsUrl && play(ttsUrl)}
+          disabled={!textVisible || !ttsUrl}
+        >
           {t.read}
         </button>
         {page < story.pages.length - 1 ? (
