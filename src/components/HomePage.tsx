@@ -9,7 +9,7 @@ interface Props {
   voice: string
   onVoiceChange: (voice: string) => void
   onGenerate: (keywords: string) => void
-  onOpenSaved: (meta: StoryMeta) => void
+  onOpenSaved: (meta: StoryMeta, voice?: string) => void
   isLoading: boolean
   loadingPhase: LoadingPhase
   imageProgress: { loaded: number; total: number }

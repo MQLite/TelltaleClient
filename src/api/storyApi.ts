@@ -35,19 +35,23 @@ export async function deleteStory(keywords: string, language: string): Promise<v
 
 const TTS_VOICES_KEY = 'telltale_tts_voices'
 
-function getTtsVoiceMap(): Record<string, string> {
+function getTtsVoiceMap(): Record<string, string[]> {
   try { return JSON.parse(localStorage.getItem(TTS_VOICES_KEY) ?? '{}') }
   catch { return {} }
 }
 
-export function getStoredVoice(keywords: string, language: string): string {
-  return getTtsVoiceMap()[`${keywords}:${language}`] ?? ''
+export function getStoredVoices(keywords: string, language: string): string[] {
+  return getTtsVoiceMap()[`${keywords}:${language}`] ?? []
 }
 
 export function setStoredVoice(keywords: string, language: string, voice: string): void {
   const map = getTtsVoiceMap()
-  map[`${keywords}:${language}`] = voice
-  localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
+  const key = `${keywords}:${language}`
+  const existing = map[key] ?? []
+  if (!existing.includes(voice)) {
+    map[key] = [...existing, voice]
+    localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
+  }
 }
 
 export function removeStoredVoice(keywords: string, language: string): void {

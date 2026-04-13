@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
 import type { Language, StoryMeta } from '../types/story'
-import { listStories, deleteStory, removeStoredVoice } from '../api/storyApi'
+import { listStories, deleteStory, getStoredVoices, removeStoredVoice } from '../api/storyApi'
+
+const VOICE_LABELS: Record<string, { en: string; zh: string }> = {
+  fable:   { en: 'Fable',   zh: '故事感' },
+  nova:    { en: 'Nova',    zh: '明亮' },
+  shimmer: { en: 'Shimmer', zh: '柔和' },
+  alloy:   { en: 'Alloy',   zh: '中性' },
+  echo:    { en: 'Echo',    zh: '低沉' },
+  onyx:    { en: 'Onyx',    zh: '温暖' },
+}
 
 interface Props {
   language: Language
-  onOpen: (meta: StoryMeta) => void
+  onOpen: (meta: StoryMeta, voice?: string) => void
 }
 
 export default function StoryList({ language, onOpen }: Props) {
@@ -51,6 +60,8 @@ export default function StoryList({ language, onOpen }: Props) {
         {stories.map((meta, i) => {
           const key = storyKey(meta)
           const isConfirming = deletingKey === key
+          const cachedVoices = getStoredVoices(meta.keywords, meta.language)
+
           return (
             <div key={i} className="story-card" onClick={() => !isConfirming && onOpen(meta)}>
               <span className="story-card-title">
@@ -58,6 +69,22 @@ export default function StoryList({ language, onOpen }: Props) {
               </span>
               <span className="story-card-keywords">{meta.keywords}</span>
               <span className="story-card-date">{formatDate(meta.createdAt)}</span>
+
+              {cachedVoices.length > 0 && (
+                <span className="story-card-voices">
+                  {cachedVoices.map(v => (
+                    <button
+                      key={v}
+                      className="voice-badge"
+                      title={language === 'zh' ? `使用${VOICE_LABELS[v]?.zh ?? v}朗读` : `Open with ${VOICE_LABELS[v]?.en ?? v}`}
+                      onClick={e => { e.stopPropagation(); onOpen(meta, v) }}
+                    >
+                      {VOICE_LABELS[v]?.[language] ?? v}
+                    </button>
+                  ))}
+                </span>
+              )}
+
               {isConfirming ? (
                 <span className="story-card-confirm">
                   <button className="btn-delete-confirm" onClick={e => handleConfirmDelete(e, meta)}>
