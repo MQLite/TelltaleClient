@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { Story, Language } from '../types/story'
 import { useTextToSpeech } from '../hooks/useTextToSpeech'
 import PaintCanvas from './PaintCanvas'
@@ -27,12 +27,11 @@ export default function StoryViewer({ story, imageBlobUrls, ttsBlobUrls, languag
   const title = language === 'zh' ? story.titleZh : story.titleEn
   const ttsUrl = ttsBlobUrls[page]
 
-  useEffect(() => {
-    setTextVisible(false)
+  const goTo = (n: number) => {
     stop()
-  }, [page])
-
-  const goTo = (n: number) => { stop(); setPage(n) }
+    setTextVisible(false)
+    setPage(n)
+  }
 
   return (
     <div className="viewer">
