@@ -1,4 +1,4 @@
-import type { Story, StoryMeta, StoryPage, Language } from '../types/story'
+import type { Story, StoryMeta, StoryPage, Language, StorySentence } from '../types/story'
 
 const BASE_URL = ''
 
@@ -24,18 +24,25 @@ export async function listStories(): Promise<StoryMeta[]> {
   return res.ok ? res.json() : []
 }
 
+function buildTtsText(sentences: StorySentence[]): string {
+  if (!sentences || sentences.length === 0) return ''
+  return sentences.map(s => s.emotion ? `(${s.emotion}) ${s.text}` : s.text).join(' ')
+}
+
 /** Fetch all TTS in one batch request, return blob URLs. */
 export async function prefetchTts(
   pages: StoryPage[],
   language: Language,
   voice: string,
 ): Promise<string[]> {
-  const texts = pages.map(p => language === 'zh' ? p.contentZh : p.contentEn)
-  const emotions = pages.map(p => p.emotion ?? '')
+  const texts = pages.map(p => {
+    const sentences = language === 'zh' ? p.sentencesZh : p.sentencesEn
+    return sentences?.length ? buildTtsText(sentences) : (language === 'zh' ? p.contentZh : p.contentEn)
+  })
   const res = await fetch('/api/tts/batch', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ texts, emotions, language, voice }),
+    body: JSON.stringify({ texts, language, voice }),
   })
   if (!res.ok) throw new Error(`TTS batch failed: ${res.status}`)
   const data = await res.json() as { audios: string[] }

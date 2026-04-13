@@ -1,9 +1,15 @@
+export interface StorySentence {
+  text: string
+  emotion: string
+}
+
 export interface StoryPage {
   pageNumber: number
   contentEn: string
   contentZh: string
+  sentencesEn: StorySentence[]
+  sentencesZh: StorySentence[]
   imagePrompt: string
-  emotion?: string
 }
 
 export interface Story {
