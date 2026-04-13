@@ -24,6 +24,7 @@ export default function App() {
   }
 
   const handleGenerate = async (keywords: string, lang?: Language) => {
+    if (isLoading) return
     const activeLang = lang ?? language
     setLoadingPhase('story')
     setError(null)
