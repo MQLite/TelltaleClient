@@ -3,6 +3,7 @@ export interface StoryPage {
   contentEn: string
   contentZh: string
   imagePrompt: string
+  emotion?: string
 }
 
 export interface Story {

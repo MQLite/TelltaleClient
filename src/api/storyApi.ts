@@ -31,10 +31,11 @@ export async function prefetchTts(
   voice: string,
 ): Promise<string[]> {
   const texts = pages.map(p => language === 'zh' ? p.contentZh : p.contentEn)
+  const emotions = pages.map(p => p.emotion ?? '')
   const res = await fetch('/api/tts/batch', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ texts, language, voice }),
+    body: JSON.stringify({ texts, emotions, language, voice }),
   })
   if (!res.ok) throw new Error(`TTS batch failed: ${res.status}`)
   const data = await res.json() as { audios: string[] }
