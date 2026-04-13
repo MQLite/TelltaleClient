@@ -4,6 +4,8 @@ React + TypeScript frontend for [Telltale](https://github.com/MQLite/Telltale) â
 
 **Backend repo:** [MQLite/Telltale](https://github.com/MQLite/Telltale)
 
+[![Built with Pollinations.AI](https://img.shields.io/badge/Built%20with-Pollinations.AI-ff6a00?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMSAxNy45M1Y0LjA3YzMuOTMuNDkgNyAzLjg1IDcgNy45M3MtMy4wNyA3LjQ0LTcgNy45M3oiLz48L3N2Zz4=)](https://pollinations.ai)
+
 ---
 
 ## Features
@@ -174,6 +176,14 @@ src/
   App.tsx               # top-level state: language, voice, story, loading phases
   App.css               # all styles
 ```
+
+---
+
+## Credits
+
+AI features (story generation, image generation, and voice narration) are powered by [Pollinations.AI](https://pollinations.ai) â€” a free, open generative AI platform.
+
+[![Pollinations.AI](https://image.pollinations.ai/prompt/pollinations%20logo%20white%20minimal?width=200&height=60&model=flux&nologo=true)](https://pollinations.ai)
 
 ---
 
