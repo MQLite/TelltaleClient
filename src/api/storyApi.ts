@@ -24,6 +24,13 @@ export async function listStories(): Promise<StoryMeta[]> {
   return res.ok ? res.json() : []
 }
 
+export async function deleteStory(keywords: string, language: string): Promise<void> {
+  await fetch(
+    `${BASE_URL}/api/story?keywords=${encodeURIComponent(keywords)}&language=${encodeURIComponent(language)}`,
+    { method: 'DELETE' },
+  )
+}
+
 function buildTtsText(sentences: StorySentence[]): string {
   if (!sentences || sentences.length === 0) return ''
   return sentences.map(s => s.emotion ? `(${s.emotion}) ${s.text}` : s.text).join(' ')

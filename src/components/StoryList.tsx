@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Language, StoryMeta } from '../types/story'
-import { listStories } from '../api/storyApi'
+import { listStories, deleteStory } from '../api/storyApi'
 
 interface Props {
   language: Language
@@ -9,6 +9,7 @@ interface Props {
 
 export default function StoryList({ language, onOpen }: Props) {
   const [stories, setStories] = useState<StoryMeta[]>([])
+  const [deletingKey, setDeletingKey] = useState<string | null>(null)
 
   useEffect(() => {
     listStories().then(setStories)
@@ -23,19 +24,56 @@ export default function StoryList({ language, onOpen }: Props) {
       month: 'short', day: 'numeric', year: 'numeric',
     })
 
+  const storyKey = (meta: StoryMeta) => `${meta.keywords}:${meta.language}`
+
+  const handleDeleteClick = (e: React.MouseEvent, meta: StoryMeta) => {
+    e.stopPropagation()
+    setDeletingKey(storyKey(meta))
+  }
+
+  const handleConfirmDelete = async (e: React.MouseEvent, meta: StoryMeta) => {
+    e.stopPropagation()
+    await deleteStory(meta.keywords, meta.language)
+    setStories(prev => prev.filter(s => !(s.keywords === meta.keywords && s.language === meta.language)))
+    setDeletingKey(null)
+  }
+
+  const handleCancelDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDeletingKey(null)
+  }
+
   return (
     <div className="story-list">
       <h2 className="story-list-title">{label}</h2>
       <div className="story-list-grid">
-        {stories.map((meta, i) => (
-          <button key={i} className="story-card" onClick={() => onOpen(meta)}>
-            <span className="story-card-title">
-              {language === 'zh' ? meta.titleZh : meta.titleEn}
-            </span>
-            <span className="story-card-keywords">{meta.keywords}</span>
-            <span className="story-card-date">{formatDate(meta.createdAt)}</span>
-          </button>
-        ))}
+        {stories.map((meta, i) => {
+          const key = storyKey(meta)
+          const isConfirming = deletingKey === key
+          return (
+            <div key={i} className="story-card" onClick={() => !isConfirming && onOpen(meta)}>
+              <span className="story-card-title">
+                {language === 'zh' ? meta.titleZh : meta.titleEn}
+              </span>
+              <span className="story-card-keywords">{meta.keywords}</span>
+              <span className="story-card-date">{formatDate(meta.createdAt)}</span>
+              {isConfirming ? (
+                <span className="story-card-confirm">
+                  <button className="btn-delete-confirm" onClick={e => handleConfirmDelete(e, meta)}>
+                    {language === 'zh' ? '删除' : 'Delete'}
+                  </button>
+                  <button className="btn-delete-cancel" onClick={handleCancelDelete}>
+                    {language === 'zh' ? '取消' : 'Cancel'}
+                  </button>
+                </span>
+              ) : (
+                <button className="story-card-delete" onClick={e => handleDeleteClick(e, meta)} title="Delete">
+                  ×
+                </button>
+              )}
+            </div>
+          )
+        })}
       </div>
     </div>
   )
