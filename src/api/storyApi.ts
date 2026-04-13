@@ -31,6 +31,31 @@ export async function deleteStory(keywords: string, language: string): Promise<v
   )
 }
 
+// ── TTS voice cache (localStorage) ───────────────────────────────
+
+const TTS_VOICES_KEY = 'telltale_tts_voices'
+
+function getTtsVoiceMap(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem(TTS_VOICES_KEY) ?? '{}') }
+  catch { return {} }
+}
+
+export function getStoredVoice(keywords: string, language: string): string {
+  return getTtsVoiceMap()[`${keywords}:${language}`] ?? ''
+}
+
+export function setStoredVoice(keywords: string, language: string, voice: string): void {
+  const map = getTtsVoiceMap()
+  map[`${keywords}:${language}`] = voice
+  localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
+}
+
+export function removeStoredVoice(keywords: string, language: string): void {
+  const map = getTtsVoiceMap()
+  delete map[`${keywords}:${language}`]
+  localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
+}
+
 function buildTtsText(sentences: StorySentence[]): string {
   if (!sentences || sentences.length === 0) return ''
   return sentences.map(s => s.emotion ? `(${s.emotion}) ${s.text}` : s.text).join(' ')

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Language, StoryMeta } from '../types/story'
-import { listStories, deleteStory } from '../api/storyApi'
+import { listStories, deleteStory, removeStoredVoice } from '../api/storyApi'
 
 interface Props {
   language: Language
@@ -34,6 +34,7 @@ export default function StoryList({ language, onOpen }: Props) {
   const handleConfirmDelete = async (e: React.MouseEvent, meta: StoryMeta) => {
     e.stopPropagation()
     await deleteStory(meta.keywords, meta.language)
+    removeStoredVoice(meta.keywords, meta.language)
     setStories(prev => prev.filter(s => !(s.keywords === meta.keywords && s.language === meta.language)))
     setDeletingKey(null)
   }

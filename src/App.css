@@ -554,6 +554,73 @@
   background: rgba(255,255,255,0.06);
 }
 
+/* ─── Voice conflict dialog ──────────────────────────────────── */
+.conflict-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(3px);
+}
+.conflict-dialog {
+  background: #1e1830;
+  border: 1px solid rgba(240,192,96,0.25);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+  max-width: 420px;
+  width: calc(100% - 2rem);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+.conflict-body {
+  font-size: 0.92rem;
+  color: var(--cream);
+  line-height: 1.6;
+  margin: 0 0 1.25rem;
+}
+.conflict-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.btn-conflict-cached {
+  background: rgba(240,192,96,0.15);
+  border: 1px solid rgba(240,192,96,0.4);
+  color: var(--gold);
+  font-size: 0.88rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+.btn-conflict-cached:hover { background: rgba(240,192,96,0.25); }
+.btn-conflict-regen {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--cream);
+  font-size: 0.88rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+.btn-conflict-regen:hover { background: rgba(255,255,255,0.1); }
+.btn-conflict-none {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.82rem;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s;
+}
+.btn-conflict-none:hover { color: var(--cream); }
+
 /* ─── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .home-card { padding: 2rem 1.25rem; }
