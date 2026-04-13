@@ -131,8 +131,9 @@ export default function App() {
       )}
 
       {voiceConflict && (
-        <div className="conflict-overlay" onClick={() => setVoiceConflict(null)}>
-          <div className="conflict-dialog" onClick={e => e.stopPropagation()}>
+        <div className="conflict-overlay">
+          <div className="conflict-dialog">
+            <button className="conflict-close" onClick={() => setVoiceConflict(null)} aria-label="Close">×</button>
             <p className="conflict-body">
               {language === 'zh'
                 ? <>此故事已缓存以下朗读声音，当前选择的「<b>{voiceLabel(voiceConflict.selectedVoice, 'zh')}</b>」需重新生成：</>

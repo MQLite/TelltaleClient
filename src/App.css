@@ -590,6 +590,7 @@
   backdrop-filter: blur(3px);
 }
 .conflict-dialog {
+  position: relative;
   background: #1e1830;
   border: 1px solid rgba(240,192,96,0.25);
   border-radius: 14px;
@@ -598,6 +599,21 @@
   width: calc(100% - 2rem);
   box-shadow: 0 12px 40px rgba(0,0,0,0.5);
 }
+.conflict-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+.conflict-close:hover { color: var(--cream); }
 .conflict-body {
   font-size: 0.9rem;
   color: var(--cream);
