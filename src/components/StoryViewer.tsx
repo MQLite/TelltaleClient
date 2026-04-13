@@ -26,11 +26,20 @@ export default function StoryViewer({ story, imageBlobUrls, ttsBlobUrls, languag
   const content = language === 'zh' ? current.contentZh : current.contentEn
   const title = language === 'zh' ? story.titleZh : story.titleEn
   const ttsUrl = ttsBlobUrls[page]
+  const isLastPage = page === story.pages.length - 1
 
   const goTo = (n: number) => {
     stop()
     setTextVisible(false)
     setPage(n)
+  }
+
+  const handlePaintComplete = () => {
+    setTextVisible(true)
+    if (ttsUrl) {
+      const onEnded = isLastPage ? undefined : () => goTo(page + 1)
+      play(ttsUrl, onEnded)
+    }
   }
 
   return (
@@ -45,7 +54,7 @@ export default function StoryViewer({ story, imageBlobUrls, ttsBlobUrls, languag
         <PaintCanvas
           key={`page-${page}`}
           imageUrl={imageBlobUrls[page]}
-          onPaintComplete={() => setTextVisible(true)}
+          onPaintComplete={handlePaintComplete}
         />
       </div>
 
@@ -59,12 +68,12 @@ export default function StoryViewer({ story, imageBlobUrls, ttsBlobUrls, languag
         </button>
         <button
           className="btn-speak"
-          onClick={() => ttsUrl && play(ttsUrl)}
+          onClick={() => ttsUrl && play(ttsUrl, isLastPage ? undefined : () => goTo(page + 1))}
           disabled={!textVisible || !ttsUrl}
         >
           {t.read}
         </button>
-        {page < story.pages.length - 1 ? (
+        {!isLastPage ? (
           <button className="btn-nav btn-primary" onClick={() => goTo(page + 1)}>{t.next}</button>
         ) : (
           <button className="btn-nav btn-finish" onClick={() => { stop(); onBack() }}>{t.finish}</button>

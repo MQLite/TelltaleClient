@@ -11,10 +11,11 @@ export function useTextToSpeech() {
     }
   }, [])
 
-  const play = useCallback((blobUrl: string) => {
+  const play = useCallback((blobUrl: string, onEnded?: () => void) => {
     stop()
     const audio = new Audio(blobUrl)
     audioRef.current = audio
+    if (onEnded) audio.addEventListener('ended', onEnded, { once: true })
     audio.play().catch(() => {})
   }, [stop])
 

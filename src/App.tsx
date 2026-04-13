@@ -9,7 +9,7 @@ export type LoadingPhase = 'idle' | 'story' | 'images' | 'tts'
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('zh')
-  const [voice, setVoice] = useState(() => 'nova')
+  const [voice, setVoice] = useState('')
   const [story, setStory] = useState<Story | null>(null)
   const [imageBlobUrls, setImageBlobUrls] = useState<string[]>([])
   const [ttsBlobUrls, setTtsBlobUrls] = useState<string[]>([])
@@ -20,7 +20,6 @@ export default function App() {
   const handleOpenSaved = (meta: StoryMeta) => {
     const lang = meta.language as Language
     setLanguage(lang)
-    setVoice(lang === 'zh' ? 'nova' : 'fable')
     handleGenerate(meta.keywords, lang)
   }
 
@@ -82,7 +81,7 @@ export default function App() {
       ) : (
         <HomePage
           language={language}
-          onLanguageChange={lang => { setLanguage(lang); setVoice(lang === 'zh' ? 'nova' : 'fable') }}
+          onLanguageChange={setLanguage}
           voice={voice}
           onVoiceChange={setVoice}
           onGenerate={handleGenerate}
