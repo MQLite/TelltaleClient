@@ -26,4 +26,5 @@ export interface StoryMeta {
   keywords: string
   language: Language
   createdAt: string
+  cachedVoices?: string[]
 }

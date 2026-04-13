@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { Language, StoryMeta } from '../types/story'
-import { listStories, deleteStory, getStoredVoices, removeStoredVoice } from '../api/storyApi'
+import { listStories, deleteStory } from '../api/storyApi'
 import { voiceLabel } from '../constants/voices'
 
 interface Props {
@@ -35,7 +35,6 @@ export default function StoryList({ language, onOpen }: Props) {
   const handleConfirmDelete = async (e: React.MouseEvent, meta: StoryMeta) => {
     e.stopPropagation()
     await deleteStory(meta.keywords, meta.language)
-    removeStoredVoice(meta.keywords, meta.language)
     setStories(prev => prev.filter(s => !(s.keywords === meta.keywords && s.language === meta.language)))
     setDeletingKey(null)
   }
@@ -52,7 +51,7 @@ export default function StoryList({ language, onOpen }: Props) {
         {stories.map((meta, i) => {
           const key = storyKey(meta)
           const isConfirming = deletingKey === key
-          const cachedVoices = getStoredVoices(meta.keywords, meta.language)
+          const cachedVoices = meta.cachedVoices ?? []
 
           return (
             <div key={i} className="story-card" onClick={() => !isConfirming && onOpen(meta)}>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { Story, Language, StoryMeta } from './types/story'
-import { generateStory, prefetchImages, prefetchTts, getStoredVoices, setStoredVoice } from './api/storyApi'
+import { generateStory, prefetchImages, prefetchTts, recordCachedVoice } from './api/storyApi'
 import { voiceLabel } from './constants/voices'
 import HomePage from './components/HomePage'
 import StoryViewer from './components/StoryViewer'
@@ -33,7 +33,7 @@ export default function App() {
 
     if (voiceOverride === undefined) {
       // Card body click — check for conflict
-      const cachedVoices = getStoredVoices(meta.keywords, meta.language)
+      const cachedVoices = meta.cachedVoices ?? []
       if (voice && cachedVoices.length > 0 && !cachedVoices.includes(voice)) {
         setVoiceConflict({ meta, cachedVoices, selectedVoice: voice })
         return
@@ -64,7 +64,7 @@ export default function App() {
       if (activeVoice) {
         try {
           ttsBlobs = await prefetchTts(result.pages, activeLang, activeVoice)
-          setStoredVoice(keywords, activeLang, activeVoice)
+          recordCachedVoice(keywords, activeLang, activeVoice).catch(() => {})
         } catch {
           // TTS failure is non-fatal — story still shows without narration
         }

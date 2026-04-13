@@ -31,33 +31,12 @@ export async function deleteStory(keywords: string, language: string): Promise<v
   )
 }
 
-// ── TTS voice cache (localStorage) ───────────────────────────────
-
-const TTS_VOICES_KEY = 'telltale_tts_voices'
-
-function getTtsVoiceMap(): Record<string, string[]> {
-  try { return JSON.parse(localStorage.getItem(TTS_VOICES_KEY) ?? '{}') }
-  catch { return {} }
-}
-
-export function getStoredVoices(keywords: string, language: string): string[] {
-  return getTtsVoiceMap()[`${keywords}:${language}`] ?? []
-}
-
-export function setStoredVoice(keywords: string, language: string, voice: string): void {
-  const map = getTtsVoiceMap()
-  const key = `${keywords}:${language}`
-  const existing = map[key] ?? []
-  if (!existing.includes(voice)) {
-    map[key] = [...existing, voice]
-    localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
-  }
-}
-
-export function removeStoredVoice(keywords: string, language: string): void {
-  const map = getTtsVoiceMap()
-  delete map[`${keywords}:${language}`]
-  localStorage.setItem(TTS_VOICES_KEY, JSON.stringify(map))
+export async function recordCachedVoice(keywords: string, language: string, voice: string): Promise<void> {
+  await fetch(`${BASE_URL}/api/story/voice`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ keywords, language, voice }),
+  })
 }
 
 function buildTtsText(sentences: StorySentence[]): string {
