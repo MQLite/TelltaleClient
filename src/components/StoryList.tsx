@@ -1,15 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Language, StoryMeta } from '../types/story'
 import { listStories, deleteStory, getStoredVoices, removeStoredVoice } from '../api/storyApi'
-
-const VOICE_LABELS: Record<string, { en: string; zh: string }> = {
-  fable:   { en: 'Fable',   zh: '故事感' },
-  nova:    { en: 'Nova',    zh: '明亮' },
-  shimmer: { en: 'Shimmer', zh: '柔和' },
-  alloy:   { en: 'Alloy',   zh: '中性' },
-  echo:    { en: 'Echo',    zh: '低沉' },
-  onyx:    { en: 'Onyx',    zh: '温暖' },
-}
+import { voiceLabel } from '../constants/voices'
 
 interface Props {
   language: Language
@@ -76,10 +68,10 @@ export default function StoryList({ language, onOpen }: Props) {
                     <button
                       key={v}
                       className="voice-badge"
-                      title={language === 'zh' ? `使用${VOICE_LABELS[v]?.zh ?? v}朗读` : `Open with ${VOICE_LABELS[v]?.en ?? v}`}
+                      title={language === 'zh' ? `使用${voiceLabel(v, 'zh')}朗读` : `Open with ${voiceLabel(v, 'en')}`}
                       onClick={e => { e.stopPropagation(); onOpen(meta, v) }}
                     >
-                      {VOICE_LABELS[v]?.[language] ?? v}
+                      {voiceLabel(v, language)}
                     </button>
                   ))}
                 </span>
